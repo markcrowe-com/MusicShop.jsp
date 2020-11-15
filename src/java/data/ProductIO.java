@@ -7,7 +7,7 @@ import java.util.*;
 public class ProductIO
 {
 // gets a product
-	public static Product getProduct(String code, String filepath)
+	private static Product getProduct(String code, String filepath)
 	{
 		try
 		{
@@ -44,7 +44,7 @@ public class ProductIO
 		}
 	}
 	// gets all the products
-	public static ArrayList<Product> getProducts(String filepath)
+	private static ArrayList<Product> getProducts(String filepath)
 	{
 		ArrayList<Product> products = new ArrayList<Product>();
 		File file = new File(filepath);

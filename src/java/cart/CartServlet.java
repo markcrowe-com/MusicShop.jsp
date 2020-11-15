@@ -3,7 +3,7 @@ package cart;
 import business.Cart;
 import business.LineItem;
 import business.Product;
-import data.ProductIO;
+import data.ProductIORepository;
 import data.ProductRepository;
 import java.io.*;
 import javax.servlet.*;
@@ -12,14 +12,13 @@ import javax.servlet.http.*;
 public class CartServlet extends HttpServlet
 {
 
-	private ProductRepository productRepository = new ProductIO();
+	private ProductRepository productRepository;
 	@Override
-	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response)
-			throws ServletException, IOException
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-
-		ServletContext sc = getServletContext();
+		ServletContext servletContext = getServletContext();
+		String path = servletContext.getRealPath("/WEB-INF/products.txt");
+		productRepository = new ProductIORepository(path);
 
 		// get current action
 		String action = request.getParameter("action");
@@ -62,8 +61,7 @@ public class CartServlet extends HttpServlet
 				quantity = 1;
 			}
 
-			String path = sc.getRealPath("/WEB-INF/products.txt");
-			Product product = ProductIO.getProduct(productCode, path);
+			Product product = productRepository.getProduct(productCode);
 
 			LineItem lineItem = new LineItem();
 			lineItem.setProduct(product);
@@ -85,7 +83,7 @@ public class CartServlet extends HttpServlet
 			url = "/checkout.jsp";
 		}
 
-		sc.getRequestDispatcher(url)
+		servletContext.getRequestDispatcher(url)
 				.forward(request, response);
 	}
 }

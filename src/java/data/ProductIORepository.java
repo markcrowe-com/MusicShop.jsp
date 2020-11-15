@@ -4,7 +4,7 @@ import business.Product;
 import java.io.*;
 import java.util.*;
 
-public class ProductIORepository
+public class ProductIORepository implements ProductRepository
 {
 	private final String filepath;
 	public ProductIORepository(String filepath)
