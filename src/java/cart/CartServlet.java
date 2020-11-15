@@ -3,7 +3,7 @@ package cart;
 import business.Cart;
 import business.LineItem;
 import business.Product;
-import data.ProductIORepository;
+import data.ProductDB;
 import data.ProductRepository;
 import java.io.*;
 import javax.servlet.*;
@@ -18,7 +18,7 @@ public class CartServlet extends HttpServlet
 	{
 		ServletContext servletContext = getServletContext();
 		String path = servletContext.getRealPath("/WEB-INF/products.txt");
-		productRepository = new ProductIORepository(path);
+		productRepository = new ProductDB();
 
 		// get current action
 		String action = request.getParameter("action");

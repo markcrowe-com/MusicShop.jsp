@@ -48,7 +48,7 @@ public class ProductIORepository implements ProductRepository
 		}
 	}
 	// gets all the products
-	public ArrayList<Product> getProducts(String filepath)
+	public ArrayList<Product> getProducts()
 	{
 		ArrayList<Product> products = new ArrayList<Product>();
 		File file = new File(filepath);

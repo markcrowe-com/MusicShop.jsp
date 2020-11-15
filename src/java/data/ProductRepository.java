@@ -9,5 +9,5 @@ import java.util.List;
 public interface ProductRepository
 {
 	Product getProduct(String code);
-	List<Product> getProducts(String filepath);
+	List<Product> getProducts();
 }

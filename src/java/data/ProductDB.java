@@ -5,49 +5,85 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Ross Mcinerney
  */
-public class ProductDB
+public class ProductDB implements ProductRepository
 {
-	public static Product getProduct(String code, String description)
+	@Override
+	public Product getProduct(String code)
 	{
-		ConnectionPool pool = ConnectionPool.getInstance();
-		Connection connection = pool.getConnection();
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-
-		String query = "SELECT * FROM product"
-				+ "WHERE ProductCode = ?";
+		Connection connection = ConnectionPool.getInstance().getConnection();
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
 		try
 		{
-			ps = connection.prepareStatement(query);
-			ps.setString(1, code);
-			ps.setString(2, description);
-			rs = ps.executeQuery();
+			String query = "SELECT * FROM product WHERE ProductCode = ?";
+			preparedStatement = connection.prepareStatement(query);
+			preparedStatement.setString(1, code);
+
+			resultSet = preparedStatement.executeQuery();
 			Product product = null;
-			if(rs.next())
+			if(resultSet.next())
 			{
 				product = new Product();
-				product.setCode(rs.getString("productCode"));
-				product.setDescription(rs.getString("description"));
-				product.setPrice(rs.getInt("Price"));
+				product.setCode(resultSet.getString("productCode"));
+				product.setDescription(resultSet.getString("description"));
+				product.setPrice(resultSet.getInt("Price"));
 			}
 			return product;
 		}
-		catch(SQLException e)
+		catch(SQLException ex)
 		{
-			System.out.println(e);
-			return null;
+			Logger.getLogger(ProductDB.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		finally
 		{
-			DBUtil.closeResultSet(rs);
-			DBUtil.closePreparedStatement(ps);
-			pool.freeConnection(connection);
+			DBUtil.closeResultSet(resultSet);
+			DBUtil.closePreparedStatement(preparedStatement);
+			ConnectionPool.getInstance().freeConnection(connection);
 		}
+		return null;
 	}
+	@Override
+	public List<Product> getProducts()
+	{
+		Connection connection = ConnectionPool.getInstance().getConnection();
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try
+		{
+			String query = "SELECT * FROM product";
+			preparedStatement = connection.prepareStatement(query);
 
+			resultSet = preparedStatement.executeQuery();
+			ArrayList<Product> products = new ArrayList<>();
+			while(resultSet.next())
+			{
+				Product product = new Product();
+				product.setCode(resultSet.getString("productCode"));
+				product.setDescription(resultSet.getString("description"));
+				product.setPrice(resultSet.getInt("Price"));
+				products.add(product);
+			}
+			return products;
+		}
+		catch(SQLException ex)
+		{
+			Logger.getLogger(ProductDB.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		finally
+		{
+			DBUtil.closeResultSet(resultSet);
+			DBUtil.closePreparedStatement(preparedStatement);
+			ConnectionPool.getInstance().freeConnection(connection);
+		}
+		return null;
+	}
 }
